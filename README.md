@@ -58,6 +58,13 @@ Take an array/struct and group the data into a grouped struct. The closure shoul
 * data - the array / struct 
 * grouping - the closure to return the group key. 
 
+### _unique(any data, [function comparator]) : any ###
+
+Returns an array with all the duplicates removed (i.e. unique). For structs, this iterates through all the values, and returns an array from that, with duplicates removed. 
+
+* data - the array/struct 
+* comparator - optional comparator closure that takes 2 arguments for comparing of objects, and returns 0 if they are the same. If not supplied, then natural comparison will be used. 
+
 ## Functions ##
 
 Functions that allow you to manipulate other functions / closures 

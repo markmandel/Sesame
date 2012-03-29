@@ -101,4 +101,83 @@ component extends="tests.AbstractTestCase"
 
 		assertEquals({1={a=1, c=3, e=5}, 0={b=2, d=4, f=6}}, grouped);
 	}
+
+	/**
+	 * test unique collections, no comparatpr
+	 */
+	public void function testUniqueNoComparatorArray()
+	{
+		var data = [1, 2, 3, 3, 4, 5, 1, 2, 9];
+		var expected = [1, 2, 3, 4, 5, 9];
+
+		var unique = _unique(data);
+
+		assertEquals(expected, unique);
+	}
+
+	/**
+	 * test unique collections, no comparatpr
+	 */
+	public void function testUniqueNoComparatorStruct()
+	{
+		var data = {a=1, b=2, c=3, d=3, e=4, f=5, g=1, h=2, i=9};
+		var expected = [1, 2, 3, 4, 5, 9];
+
+		var unique = _unique(data);
+		ArraySort(unique, "numeric");
+
+		assertEquals(expected, unique);
+	}
+
+	/**
+	 * test unique collections with a comparator
+	 */
+	public void function testUniqueComparatorArray()
+	{
+		var data = [2, 3, 3, 2, 4, 5, 6, 4, 6, 3];
+		var expected = [2, 3, 4, 5, 6];
+
+		var comparator = function(a, b)
+							{
+								if(a == b) { return 0; }
+								return 1;
+							};
+
+		assertEquals(0, comparator(1, 1));
+		assertEquals(1, comparator(2, 1));
+
+		var unique = _unique(data, comparator);
+
+		debug(unique);
+		debug(expected);
+
+		assertEquals(expected, unique);
+	}
+
+	/**
+	 * test unique collections with a comparator
+	 */
+	public void function testUniqueComparatorStruct()
+	{
+		var data = {a=2, b=3, c=3, d=2, e=4, f=5, g=6, h=4, i=6, j=3};
+		var expected = [2, 3, 4, 5, 6];
+
+		var comparator = function(a, b)
+							{
+								if(a == b) { return 0; }
+								return 1;
+							};
+
+		assertEquals(0, comparator(1, 1));
+		assertEquals(1, comparator(2, 1));
+
+		var unique = _unique(data, comparator);
+
+		arraySort(unique, "numeric");
+
+		debug(unique);
+		debug(expected);
+
+		assertEquals(expected, unique);
+	}
 }

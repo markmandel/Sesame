@@ -127,4 +127,53 @@
 		return collection;
 	}
 	
+	/**
+	 * Returns an array with all the duplicates removed (i.e. unique). For structs, this iterates through all the
+	 * values, and returns an array from that, with duplicates removed.
+	 *
+	 * @data the array/struct
+	 * @comparator optional comparator closure that takes 2 arguments for comparing of objects, and returns 0 if they are the same. If not supplied, then natural comparison will be used.
+	 */
+	public any function _unique(required any data, function comparator)
+	{
+		var collection = [];
+		if(isStruct(arguments.data))
+		{
+			var array = [];
+			array.addAll(arguments.data.values());
+			arguments.data = array;
+		}
+
+		if(structKeyExists(arguments, "comparator"))
+		{
+			var _comparator = arguments.comparator;
+
+			while(!arrayIsEmpty(arguments.data))
+			{
+				var item = arguments.data.remove(JavaCast("int", 0));
+				arrayAppend(collection, item);
+
+				var find = function(it)
+				{
+					if(_comparator(it, item) != 0)
+					{
+						return true;
+					}
+					return false;
+				};
+
+				arguments.data = ArrayFilter(arguments.data, find);
+			}
+		}
+		else
+		{
+			var set = createObject("java", "java.util.LinkedHashSet").init(ArrayLen(arguments.data));
+			ArrayEach(arguments.data, function(it) { set.add(it); } );
+
+			collection.addAll(set);
+		}
+
+		return collection;
+	}
+	
 </cfscript>
