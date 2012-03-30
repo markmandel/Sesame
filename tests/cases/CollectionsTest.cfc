@@ -24,7 +24,9 @@ component extends="tests.AbstractTestCase"
 		var data = {foo="bar", things="goat"};
 		var collected = _collect(data, function(k, v) { return reverse(k) & v; });
 
-		assertEquals(["sgnihtgoat", "oofbar"], collected);
+		arraySort(collected, "text");
+
+		assertEquals(["oofbar", "sgnihtgoat"], collected);
 	}
 
 	/**
@@ -142,6 +144,31 @@ component extends="tests.AbstractTestCase"
 								if(a == b) { return 0; }
 								return 1;
 							};
+
+		assertEquals(0, comparator(1, 1));
+		assertEquals(1, comparator(2, 1));
+
+		var unique = _unique(data, comparator);
+
+		debug(unique);
+		debug(expected);
+
+		assertEquals(expected, unique);
+	}
+
+	/**
+	 * test unique collections with a comparator
+	 */
+	public void function testUniqueComparatorArrayByReference()
+	{
+		var data = createObject("java", "java.util.ArrayList").init([2, 3, 3, 2, 4, 5, 6, 4, 6, 3]);
+		var expected = [2, 3, 4, 5, 6];
+
+		var comparator = function(a, b)
+		{
+			if(a == b) { return 0; }
+			return 1;
+		};
 
 		assertEquals(0, comparator(1, 1));
 		assertEquals(1, comparator(2, 1));

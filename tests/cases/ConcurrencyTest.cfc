@@ -16,6 +16,8 @@ component extends="tests.AbstractTestCase"
 
 		_eachParallel(data, function(it) { ArrayAppend(collected, 2*it); });
 
+		arraySort(collected, "numeric");
+
 		assertEquals([2,4,6,8], collected);
 	}
 
