@@ -106,14 +106,20 @@ Iterates from this number up to the given number, inclusive, incrementing by one
 
 ## Concurrency ##
 
-Functions for working with threads and concurrent programming 
 
-### _eachParallel(any data, function closure) : void ###
+Functions for working with threads and concurrent programmings
+
+*Please Note*: To use this concurrency library, there will need to be a mapping to /sesame, or /sesame will need to be in the root of your project, as there are components
+that need to be instantiated to interact with the Java concurrency libraries.
+
+
+### _eachParallel(any data, function closure, [numeric numberOfThreads=5]) : void ###
 
 Do each iteration in it's own thread, and then join it all back again at the end. 
 
 * data - the array/struct to perform a closure on 
 * closure - the closure to pass through the elements from data to. 
+* numberOfThreads - number of threads to use in the thread pool for processing. 
 
 
 Contributions

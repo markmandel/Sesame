@@ -129,6 +129,11 @@ that need to be instantiated to interact with the Java concurrency libraries.
 						param = it.type & " " & param;
 					}
 
+					if(StructKeyExists(it, "default"))
+					{
+						param &= "=#it.default#";
+					}
+
 					if(!structKeyExists(it, "required") || !it.required)
 					{
 						param = "[#param#]";

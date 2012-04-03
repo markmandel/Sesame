@@ -40,7 +40,7 @@ component extends="tests.AbstractTestCase"
 	/**
 	 * test ClosureRunnable
 	 */
-	public void function testClosureRunnable()
+	public void function testClosureRunnableNoArguments()
 	{
 		var func = function() { request.foo = "bar"; };
 
@@ -53,5 +53,23 @@ component extends="tests.AbstractTestCase"
 		assertTrue(structKeyExists(request, "foo"));
 		assertEquals("bar", request.foo);
 	}
+
+	/**
+	 * test ClosureRunnable
+	 */
+	public void function testClosureRunnableWithArguments()
+	{
+		var func = function(it) { request.testClosureRunnableWithArguments = it; };
+
+		var runnable = new sesame.concurrency.ClosureRunnable(func, {1="bar"});
+
+		assertFalse(structKeyExists(request, "testClosureRunnableWithArguments"));
+
+		runnable.run();
+
+		assertTrue(structKeyExists(request, "testClosureRunnableWithArguments"));
+		assertEquals("bar", request.testClosureRunnableWithArguments);
+	}
+
 
 }

@@ -25,9 +25,9 @@
 	 *
 	 * @data the array/struct to perform a closure on
 	 * @closure the closure to pass through the elements from data to.
-	 * @numberOfThread number of threads to use in the thread pool for processing.
+	 * @numberOfThreads number of threads to use in the thread pool for processing.
 	 */
-	public void function _eachParallel(required any data, required function closure, numberOfThreads=5)
+	public void function _eachParallel(required any data, required function closure, numeric numberOfThreads=5)
 	{
 		var futures = [];
 		var executorService = createObject("java", "java.util.concurrent.Executors").newFixedThreadPool(arguments.numberOfThreads);
@@ -37,13 +37,8 @@
 		{
 			for(var item in arguments.data)
 			{
-				writeLog("Processing: #item#");
-
-				var func = function() {
-								writeLog("Calling: #item#");
-								_closure(item);
-							};
-				var runnable = new sesame.concurrency.ClosureRunnable(func);
+				var args ={1=item};
+				var runnable = new sesame.concurrency.ClosureRunnable(_closure, args);
 
 				runnable = createDynamicProxy(runnable, ["java.lang.Runnable"]);
 
@@ -55,6 +50,17 @@
 
 		if(isStruct(arguments.data))
 		{
+			for(var key in arguments.data)
+			{
+				var args ={1=key, 2=arguments.data[key]};
+				var runnable = new sesame.concurrency.ClosureRunnable(_closure, args);
+
+				runnable = createDynamicProxy(runnable, ["java.lang.Runnable"]);
+
+				var future = executorService.submit(runnable);
+
+				arrayAppend(futures, future);
+			}
 		}
 
 		//join it all back up

@@ -20,15 +20,17 @@
 component accessors="true"
 {
 	property func;
+	property args;
 
 	/**
 	 * Constructor
 	 *
 	 * @func The function/closure to be called.
 	 */
-	public ClosureRunnable function init(required function func)
+	public ClosureRunnable function init(required function func, struct args={})
 	{
 		setFunc(arguments.func);
+		setArgs(args);
 		return this;
 	}
 
@@ -37,6 +39,6 @@ component accessors="true"
 	 */
 	public void function run()
 	{
-		variables.func();
+		variables.func(argumentCollection=variables.args);
 	}
 }
