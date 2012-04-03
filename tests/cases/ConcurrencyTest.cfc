@@ -16,6 +16,9 @@ component extends="tests.AbstractTestCase"
 
 		_eachParallel(data, function(it) { ArrayAppend(collected, 2*it); });
 
+		debug(data);
+		debug(collected);
+
 		arraySort(collected, "numeric");
 
 		assertEquals([2,4,6,8], collected);
@@ -33,5 +36,22 @@ component extends="tests.AbstractTestCase"
 
 		assertEquals({a=2, b=4, c=6, d=8}, collected);
 	}
-	
+
+	/**
+	 * test ClosureRunnable
+	 */
+	public void function testClosureRunnable()
+	{
+		var func = function() { request.foo = "bar"; };
+
+		var runnable = new sesame.concurrency.ClosureRunnable(func);
+
+		assertFalse(structKeyExists(request, "foo"));
+
+		runnable.run();
+
+		assertTrue(structKeyExists(request, "foo"));
+		assertEquals("bar", request.foo);
+	}
+
 }

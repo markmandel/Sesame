@@ -70,6 +70,13 @@ Thanks!!!
 [1]: http://classiclit.about.com/library/bl-etexts/arabian/bl-arabian-alibaba.htm
 </cfsavecontent>
 
+<cfsavecontent variable="concurrencyDesc">
+Functions for working with threads and concurrent programmings
+
+*Please Note*: To use this concurrency library, there will need to be a mapping to /sesame, or /sesame will need to be in the root of your project, as there are components
+that need to be instantiated to interact with the Java concurrency libraries.
+</cfsavecontent>
+
 <cfscript>
 	fileWrite(readme, header);
 
@@ -78,7 +85,7 @@ Thanks!!!
 			{file = "collections.cfm", title="Collections", description="Functions that allow you manipulate and use structs and arrays much easier"}
 			,{file = "functions.cfm", title="Functions", description="Functions that allow you to manipulate other functions / closures"}
 			,{file = "numbers.cfm", title="Numbers", description="Functions for working with numbers and general looping"}
-			,{file = "concurrency.cfm", title="Concurrency", description="Functions for working with threads and concurrent programming"}
+			,{file = "concurrency.cfm", title="Concurrency", description=concurrencyDesc}
 	];
 </cfscript>
 

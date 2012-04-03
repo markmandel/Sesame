@@ -25,50 +25,40 @@
 	 *
 	 * @data the array/struct to perform a closure on
 	 * @closure the closure to pass through the elements from data to.
+	 * @numberOfThread number of threads to use in the thread pool for processing.
 	 */
-	public void function _eachParallel(required any data, required function closure)
+	public void function _eachParallel(required any data, required function closure, numberOfThreads=5)
 	{
-		var threads = [];
-		var scope = "_eachParallel" & createUUID();
-		variables[scope] = {};
+		var futures = [];
+		var executorService = createObject("java", "java.util.concurrent.Executors").newFixedThreadPool(arguments.numberOfThreads);
+		var _closure = arguments.closure;
 
 		if(isArray(arguments.data))
 		{
-			var len = ArrayLen(arguments.data);
-			for(var counter = 1; counter lte len; counter++)
+			for(var item in arguments.data)
 			{
-				var threadname = "each-#createUUID()#";
-				arrayAppend(threads, threadname);
-				variables[scope][threadname] = {item = arguments.data[counter], closure=arguments.closure};
+				writeLog("Processing: #item#");
 
-				thread action="run" name="#threadname#" scope="#scope#"
-				{
-					var scope = variables[scope][thread.name];
-					scope.closure(scope.item);
-				}
+				var func = function() {
+								writeLog("Calling: #item#");
+								_closure(item);
+							};
+				var runnable = new sesame.concurrency.ClosureRunnable(func);
+
+				runnable = createDynamicProxy(runnable, ["java.lang.Runnable"]);
+
+				var future = executorService.submit(runnable);
+
+				arrayAppend(futures, future);
 			}
 		}
 
 		if(isStruct(arguments.data))
 		{
-			for(var key in arguments.data)
-			{
-				var threadname = "each-#createUUID()#";
-				arrayAppend(threads, threadname);
-				variables[scope][threadname] = {key = key, value=arguments.data[key], closure=arguments.closure};
-
-				thread action="run" name="#threadname#" scope="#scope#"
-				{
-					var scope = variables[scope][thread.name];
-					scope.closure(scope.key, scope.value);
-				}
-			}
 		}
 
 		//join it all back up
-		ArrayEach(threads, function(it) { threadJoin(it); });
-
-		structDelete(variables, scope);
+		ArrayEach(futures, function(it) { it.get(); });
 	}
 
 </cfscript>
