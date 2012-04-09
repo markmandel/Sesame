@@ -15,8 +15,8 @@
 
 
 
-	Make it easier to do things in parrallel.
-	These functions often used the variables scope to perform what they do in UUID'd scoped contexts.
+	Make it easier to do things in parallel.
+	They can put objects in the request scope, under the key 'sesame-concurrency-es'
 --->
 
 <cfscript>
@@ -25,46 +25,118 @@
 	 *
 	 * @data the array/struct to perform a closure on
 	 * @closure the closure to pass through the elements from data to.
-	 * @numberOfThreads number of threads to use in the thread pool for processing.
+	 * @numberOfThreads number of threads to use in the thread pool for processing. (Only needed if you aren't using _withPool())
 	 */
 	public void function _eachParallel(required any data, required function closure, numeric numberOfThreads=5)
 	{
 		var futures = [];
-		var executorService = createObject("java", "java.util.concurrent.Executors").newFixedThreadPool(arguments.numberOfThreads);
 		var _closure = arguments.closure;
 
-		if(isArray(arguments.data))
+		if(!structKeyExists(request, "sesame-concurrency-es"))
 		{
-			for(var item in arguments.data)
-			{
-				var args ={1=item};
-				var runnable = new sesame.concurrency.ClosureRunnable(_closure, args);
-
-				runnable = createDynamicProxy(runnable, ["java.lang.Runnable"]);
-
-				var future = executorService.submit(runnable);
-
-				arrayAppend(futures, future);
-			}
+			var executorService = createObject("java", "java.util.concurrent.Executors").newFixedThreadPool(arguments.numberOfThreads);
+			var shutDownEs = true;
+		}
+		else
+		{
+			var executorService = request["sesame-concurrency-es"];
+			var shutDownEs = false;
 		}
 
-		if(isStruct(arguments.data))
+		try
 		{
-			for(var key in arguments.data)
+			if(isArray(arguments.data))
 			{
-				var args ={1=key, 2=arguments.data[key]};
-				var runnable = new sesame.concurrency.ClosureRunnable(_closure, args);
+				for(var item in arguments.data)
+				{
+					var args ={1=item};
+					var runnable = new sesame.concurrency.ClosureConcurrent(_closure, args);
 
-				runnable = createDynamicProxy(runnable, ["java.lang.Runnable"]);
+					runnable = createDynamicProxy(runnable, ["java.lang.Runnable"]);
 
-				var future = executorService.submit(runnable);
+					var future = executorService.submit(runnable);
 
-				arrayAppend(futures, future);
+					arrayAppend(futures, future);
+				}
+			}
+
+			if(isStruct(arguments.data))
+			{
+				for(var key in arguments.data)
+				{
+					var args ={1=key, 2=arguments.data[key]};
+					var runnable = new sesame.concurrency.ClosureConcurrent(_closure, args);
+
+					var future = executorService.submit(runnable.toRunnable());
+
+					arrayAppend(futures, future);
+				}
+			}
+
+			//join it all back up
+			ArrayEach(futures, function(it) { it.get(); });
+		}
+		catch(Any exc)
+		{
+			rethrow;
+		}
+		finally
+		{
+			if(shutDownEs)
+			{
+				executorService.shutdown();
 			}
 		}
-
-		//join it all back up
-		ArrayEach(futures, function(it) { it.get(); });
 	}
+	
+	/**
+	 * This function allows you to share the underlying ExecutorService with multiple concurrent methods.<br/>
+	 * For example, this shares a threadpool of 10 threads across multiple _eachParrallel calls:<br/>
+	 * _withPool( 10, function() {<br/>
+	 * _eachParrallel(array, function() { ... });<br/>
+	 * _eachParrallel(array, function() { ... });<br/>
+	 * _eachParrallel(array, function() { ... });<br/>
+	 * });
+	 *
+	 * @numberOfThreads the number of threads to use in the thread pool for processing.
+	 * @closure the closure that contains the calls to other concurrent library functions.
+	 */
+	public void function _withPool(required numeric numberOfThreads, required function closure)
+	{
+		request["sesame-concurrency-es"] = createObject("java", "java.util.concurrent.Executors").newFixedThreadPool(arguments.numberOfThreads);
 
+		try
+		{
+			arguments.closure();
+		}
+		catch(Any exc)
+		{
+			rethrow;
+		}
+		finally
+		{
+			request["sesame-concurrency-es"].shutdown();
+			StructDelete(request, "sesame-concurrency-es");
+		}
+	}
+	
+	/**
+	 * Run the closure in a thread. Must be run inside a _withPool() block to set up the ExecutorService, and close it off at the end.
+	 * For example:<br/>
+	 * _withPool( 10, function() {<br/>
+	 * _thread(function() { ... });<br/>
+	 * _thread(function() { ... });<br/>
+	 * });
+	 *<br/>
+	 * Return an instance of java.util.concurrent.Future to give you control over the closure, and/or retrieve the value returned from the closure.
+	 *
+	 * @closure the closure to call asynchronously
+	 */
+	public any function _thread(required function closure)
+	{
+		var executorService = request["sesame-concurrency-es"];
+		var callable = new sesame.concurrency.ClosureConcurrent(arguments.closure);
+
+		return executorService.submit(callable.toCallable());
+	}
 </cfscript>

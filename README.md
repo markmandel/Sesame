@@ -119,7 +119,20 @@ Do each iteration in it's own thread, and then join it all back again at the end
 
 * data - the array/struct to perform a closure on 
 * closure - the closure to pass through the elements from data to. 
-* numberOfThreads - number of threads to use in the thread pool for processing. 
+* numberOfThreads - number of threads to use in the thread pool for processing. (Only needed if you aren't using _withPool()) 
+
+### _thread(function closure) : any ###
+
+Run the closure in a thread. Must be run inside a _withPool() block to set up the ExecutorService, and close it off at the end. For example:<br/> _withPool( 10, function() {<br/> _thread(function() { ... });<br/> _thread(function() { ... });<br/> }); <br/> Return an instance of java.util.concurrent.Future to give you control over the closure, and/or retrieve the value returned from the closure. 
+
+* closure - the closure to call asynchronously 
+
+### _withPool(numeric numberOfThreads, function closure) : void ###
+
+This function allows you to share the underlying ExecutorService with multiple concurrent methods.<br/> For example, this shares a threadpool of 10 threads across multiple _eachParrallel calls:<br/> _withPool( 10, function() {<br/> _eachParrallel(array, function() { ... });<br/> _eachParrallel(array, function() { ... });<br/> _eachParrallel(array, function() { ... });<br/> }); 
+
+* numberOfThreads - the number of threads to use in the thread pool for processing. 
+* closure - the closure that contains the calls to other concurrent library functions. 
 
 
 Contributions

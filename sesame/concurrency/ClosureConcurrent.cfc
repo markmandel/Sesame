@@ -15,7 +15,7 @@
 */
 
 /**
- * Implementation of java.util.Runnable that takes a closure and runs it. No value is returned.
+ * Implementation of java.util.Runnable and java.util.concurrent.Callable that takes a closure and runs it.
  */
 component accessors="true"
 {
@@ -26,8 +26,9 @@ component accessors="true"
 	 * Constructor
 	 *
 	 * @func The function/closure to be called.
+	 * @args the arguments to pass through. Defaults to none.
 	 */
-	public ClosureRunnable function init(required function func, struct args={})
+	public ClosureConcurrent function init(required function func, struct args={})
 	{
 		setFunc(arguments.func);
 		setArgs(args);
@@ -35,10 +36,34 @@ component accessors="true"
 	}
 
 	/**
-	 * Call the function.
+	 * Call the function, and returns nothing.
 	 */
 	public void function run()
 	{
 		variables.func(argumentCollection=variables.args);
+	}
+
+	/**
+	 * Call the function, and returns it's value
+	 */
+	public any function call()
+	{
+		return variables.func(argumentCollection=variables.args);
+	}
+
+	/**
+	 * convert to runnable
+	 */
+	public any function toRunnable()
+	{
+		return createDynamicProxy(this, ["java.lang.Runnable"]);
+	}
+
+	/**
+	 * convert to Callable
+	 */
+	public any function toCallable()
+	{
+		return createDynamicProxy(this, ["java.util.concurrent.Callable"]);
 	}
 }
