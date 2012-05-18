@@ -39,16 +39,16 @@ Functions that allow you manipulate and use structs and arrays much easier
 
 ### _collect(any data, function transform) : array ###
 
-collect data from one array into a whole new array. Transform closure should return the item that i to be added to the new array. 
+collect data from a array, structure or query into a whole new array. Transform closure should return the item that i to be added to the new array. 
 
-* data - the array to collect from 
+* data - the array / struct / query to collect from 
 * transform - closure to return the item for the new array 
 
 ### _collectEntries(any data, function transform) : struct ###
 
-collect data from an array or a struct into a new struct. The transform function can return either a Map, with a single key to be used as the key, and a 2nd level struct, or an array, where the 1st index in the key, and the 2nd is the value. 
+collect data from an array, struct or query into a new struct. The transform function can return either a Map, with a single key to be used as the key, and a 2nd level struct, or an array, where the 1st index in the key, and the 2nd is the value. 
 
-* data - the array / struct to collect from 
+* data - the array / struct / query to collect from 
 * transform - the closure to create the map entry. 
 
 ### _groupBy(any data, function grouping) : struct ###
@@ -57,6 +57,13 @@ Take an array/struct and group the data into a grouped struct. The closure shoul
 
 * data - the array / struct 
 * grouping - the closure to return the group key. 
+
+### _queryEach(query data, [function func]) : any ###
+
+Iterates over a query and executes the closure on each row. 
+
+* data - the query 
+* func - the closure 
 
 ### _unique(any data, [function comparator]) : any ###
 
