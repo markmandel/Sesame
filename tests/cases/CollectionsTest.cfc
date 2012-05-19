@@ -17,6 +17,19 @@ component extends="tests.AbstractTestCase"
 	}
 
 	/**
+	 * test having an child xml structre on collect
+	 */
+	public void function testCollectXML()
+	{
+		var xml = "<root><child>1</child><child>2</child><child>3</child></root>";
+		xml = xmlParse(xml);
+
+		var collected = _collect(xml.root.xmlChildren, function(it) { return it.xmlText; });
+
+		assertEquals([1, 2, 3], collected);
+	}
+
+	/**
 	* test collecting an query
 	*/
 	public void function testCollectQuery()
