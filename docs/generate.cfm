@@ -85,6 +85,7 @@ that need to be instantiated to interact with the Java concurrency libraries.
 			{file = "collections.cfm", title="Collections", description="Functions that allow you manipulate and use structs and arrays much easier"}
 			,{file = "functions.cfm", title="Functions", description="Functions that allow you to manipulate other functions / closures"}
 			,{file = "numbers.cfm", title="Numbers", description="Functions for working with numbers and general looping"}
+			,{file = "io.cfm", title="IO", description="Functions for working with input/output"}
 			,{file = "concurrency.cfm", title="Concurrency", description=concurrencyDesc}
 	];
 </cfscript>
