@@ -17,6 +17,20 @@ component extends="tests.AbstractTestCase"
 	}
 
 	/**
+	* test collecting an query
+	*/
+	public void function testCollectQuery()
+	{
+		data = queryNew("id,name,age", "integer,varchar,varchar", 
+	    [{id:1,name:"Ray",age:30}, 
+	    {id:2,name:"Jeanne",age:28}]);
+
+	    var collected = _collect(data, function(r) { return r.id*2; });
+
+	    assertEquals([2,4], collected);
+   	}
+
+	/**
 	* test collecting an array
 	*/
 	public void function testCollectStruct()
@@ -81,6 +95,23 @@ component extends="tests.AbstractTestCase"
 	}
 
 	/**
+	 * testCollectEntriesQuery
+	 */
+	public void function testCollectEntriesQuery()
+	{
+		var data = queryNew("id,name,age", "integer,varchar,varchar", 
+	    [{id:1,name:"Ray",age:30}, 
+	    {id:2,name:"Jeanne",age:28}]);
+
+		var collected = _collectEntries(data, function(r) {
+			return [r.id,r.name];
+		});
+
+
+		assertEquals({1="Ray", 2="Jeanne"}, collected);
+	}
+
+	/**
 	 * test group by with an array
 	 */
 	public void function testGroupByWithArray()
@@ -102,6 +133,22 @@ component extends="tests.AbstractTestCase"
 		var grouped = _groupBy(data, function(k, v) { return v % 2; });
 
 		assertEquals({1={a=1, c=3, e=5}, 0={b=2, d=4, f=6}}, grouped);
+	}
+
+	/** 
+	* Test queryEach
+	*/
+	public void function testQueryEach() 
+	{
+		var data = queryNew("id,name,age", "integer,varchar,varchar", 
+	    [{id:1,name:"Ray",age:30}, 
+	    {id:2,name:"Jeanne",age:28}]);
+		var total = 0;
+		var iterator = function(r) {
+			total += r.id;
+		};
+		_queryEach(data, iterator);
+		assertEquals(3, total);
 	}
 
 	/**

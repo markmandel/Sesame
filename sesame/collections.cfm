@@ -42,6 +42,10 @@
 			{
 				ArrayAppend(collection, transform(k, v));
 			});
+		} else if(isQuery(arguments.data)) {
+			for(var r in arguments.data) {
+				arrayAppend(collection, transform(r));
+			}
 		}
 
 		return collection;
@@ -80,6 +84,13 @@
 		else if(isStruct(arguments.data))
 		{
 			StructEach(arguments.data, function(k, v) { addToCollection( _transform(k, v) ); });
+		}
+		else if(isQuery(arguments.data)) 
+		{
+			for(var r in arguments.data) {
+				addToCollection(_transform(r));
+			}
+
 		}
 
 		return collection;
@@ -127,6 +138,19 @@
 		return collection;
 	}
 	
+	/**
+	 * Iterates over a query and executes the closure on each row.
+	 *
+	 * @data the query
+	 * @func the closure 
+	 */
+	public any function _queryEach(required query data, function func)
+	{
+	    for(var row in data) {
+	        func(row);
+	    }
+	}
+
 	/**
 	 * Returns an array with all the duplicates removed (i.e. unique). For structs, this iterates through all the
 	 * values, and returns an array from that, with duplicates removed.
