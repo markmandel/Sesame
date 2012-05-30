@@ -19,10 +19,10 @@
 --->
 <cfscript>
 	/**
-	 * collect data from one array into a whole new array. Transform closure should return the item that i
+	 * collect data from a array, structure or query into a whole new array. Transform closure should return the item that i
 	 * to be added to the new array.
 	 *
-	 * @data the array to collect from
+	 * @data the array / struct / query to collect from
 	 * @transform closure to return the item for the new array
 	 */
 	public array function _collect(required any data, required function transform)
@@ -52,11 +52,11 @@
 	};
 	
 	/**
-	 * collect data from an array or a struct into a new struct.
+	 * collect data from an array, struct or query into a new struct.
 	 * The transform function can return either a Map, with a single key to be used as the key, and a 2nd level struct,
 	 * or an array, where the 1st index in the key, and the 2nd is the value.
 	 *
-	 * @data the array / struct to collect from
+	 * @data the array / struct / query to collect from
 	 * @transform the closure to create the map entry.
 	 */
 	public struct function _collectEntries(required any data, required function transform)
