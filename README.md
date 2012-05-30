@@ -58,6 +58,13 @@ Take an array/struct and group the data into a grouped struct. The closure shoul
 * data - the array / struct 
 * grouping - the closure to return the group key. 
 
+### _queryEach(query data, [function func]) : any ###
+
+Iterates over a query and executes the closure on each row. 
+
+* data - the query 
+* func - the closure 
+
 ### _unique(any data, [function comparator]) : any ###
 
 Returns an array with all the duplicates removed (i.e. unique). For structs, this iterates through all the values, and returns an array from that, with duplicates removed. 
@@ -103,6 +110,17 @@ Iterates from this number up to the given number, inclusive, incrementing by one
 * numberFrom - the number to start at 
 * numberTo - the number to go to 
 * closure - the closure to call with the current count. 
+
+## IO ##
+
+Functions for working with input/output 
+
+### _fileLineEach(any file, function handler) : void ###
+
+Read a file and call the closure on each line. Works on either a file ob or path 
+
+* file - the file to load 
+* handler - closure to take the input 
 
 ## Concurrency ##
 

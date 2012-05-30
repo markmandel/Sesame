@@ -27,9 +27,17 @@
 	public void function _fileLineEach(required any file, required function handler)
 	{
 		if(isSimpleValue(arguments.file)) arguments.file = fileOpen(arguments.file);
-		while(!fileIsEOF(arguments.file)) {
-			var line = fileReadLine(arguments.file);
-			handler(line);
+
+		try
+		{
+			while(!fileIsEOF(arguments.file)) {
+				var line = fileReadLine(arguments.file);
+				handler(line);
+			}
+		}
+		finally
+		{
+			fileClose(arguments.file);
 		}
 	};
 
