@@ -78,7 +78,7 @@ Functions that allow you to manipulate other functions / closures
 
 ### _curry(function func, array args) : function ###
 
-Curry a function from left to right. 
+Curry a function from left to right. Currying is creating a wrapper function where you set a constant value for one or more of the arguments of the function being wrapped. If you curry the function: `function (a,b)` with values `[5]`, then your wrapper will accept one argument (b), and always pass 5 for a.
 
 * func - the function/closure you want to curry 
 * args - the array of arguments you wish to curry with. 
