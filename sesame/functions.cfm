@@ -18,7 +18,7 @@
 --->
 <cfscript>
 	/**
-	 * Curry a function from left to right.
+	 * Curry a function from left to right. Currying is creating a wrapper function where you set a constant value for one or more of the arguments of the function being wrapped. If you curry the function: `function (a,b,c)` with values `[4,2]`, then your wrapper will accept one argument (`c`), and always pass 4 for `a` and 2 for `b`.
 	 * @func the function/closure you want to curry
 	 * @args the array of arguments you wish to curry with.
 	 */
